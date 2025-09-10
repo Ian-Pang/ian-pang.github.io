@@ -1,0 +1,474 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Ian Pang – Physics</title>
+  <style>
+    :root{
+      color-scheme: dark;
+      --bg:#0b1020; --text:#e5e7eb; --muted:#a9b2d0;
+      --nav:#101733; --card:#1c1f36;
+      --accent:#7c3aed; --accent2:#22d3ee;
+      --border:rgba(255,255,255,.15);
+      --radius:14px;
+    }
+    :root[data-theme="light"]{
+      color-scheme: light;
+      --bg:#f6f8ff; --text:#111827; --muted:#4b5563;
+      --nav:#0e152ff2; --card:#ffffff;
+      --accent:#7c3aed; --accent2:#22d3ee;
+      --border:#e5e7eb;
+      --radius:14px;
+    }
+
+    /* Base */
+    html,body{height:100%}
+    body{margin:0;font-family:system-ui, -apple-system, Segoe UI, Roboto, sans-serif;background:var(--bg);color:var(--text);line-height:1.7}
+    a{color:inherit;text-decoration:none}
+
+    /* Nav (always dark in light mode) */
+    nav{position:sticky;top:0;display:flex;justify-content:center;gap:.6rem;background:var(--nav);padding:.8rem 1.2rem;z-index:1000;backdrop-filter:saturate(150%) blur(12px);border-bottom:1px solid var(--border)}
+    nav a{padding:.5rem 1rem;border-radius:var(--radius);font-weight:600;color:#fff}
+    nav a:hover,nav a.active{background:rgba(255,255,255,.1)}
+    .theme-toggle{margin-left:auto;background:none;border:1px solid var(--border);color:#fff;border-radius:50%;cursor:pointer;padding:.5rem}
+
+    /* Hero */
+    header.hero{position:relative;min-height:60vh;background:url('images/nyc_skyline.png') center/cover no-repeat;display:flex;align-items:center;justify-content:center;padding:3rem 5vw}
+    header.hero::before{content:"";position:absolute;inset:0;background:rgba(0,0,0,.6)}
+    .hero-inner{position:relative;z-index:1;display:grid;grid-template-columns:1.1fr .9fr;gap:2rem;align-items:center;max-width:1200px;width:100%}
+    .hero-text h1{margin:0 0 1rem;font-size:3.6rem;line-height:1.2;text-shadow:0 3px 8px rgba(0,0,0,.7);color:#fff;animation:heading-pop .7s ease both}
+    .hero-text p{max-width:660px;font-size:1.25rem;font-weight:500;text-shadow:0 2px 6px rgba(0,0,0,.65);color:#f5f5f5;animation:fade-up .85s ease .12s both}
+    .hero-portrait{justify-self:center}
+    .hero-portrait .portrait{width:300px;height:300px;border-radius:28px;overflow:hidden;border:5px solid #fff;box-shadow:0 12px 30px rgba(0,0,0,.6);animation:portrait-pop .8s ease both, portrait-float 6s ease-in-out 1s infinite;transition:box-shadow .25s ease, transform .2s ease}
+    .hero-portrait .portrait:hover{box-shadow:0 14px 36px rgba(0,0,0,.55), 0 0 0 3px color-mix(in oklab, var(--accent) 40%, transparent), 0 0 24px color-mix(in oklab, var(--accent2) 35%, transparent)}
+    .hero-portrait img{width:100%;height:100%;object-fit:cover}
+
+    /* Buttons */
+    .cta{display:flex;gap:.8rem;flex-wrap:wrap;margin-top:1.2rem;animation:fade-up 1s ease .25s both}
+    .btn{display:inline-flex;align-items:center;gap:.5rem;padding:.9rem 1.4rem;border-radius:var(--radius);font-weight:700;letter-spacing:.3px;cursor:pointer;transition:transform .2s ease,box-shadow .2s ease,filter .2s ease;text-decoration:none}
+    .btn.primary{background:linear-gradient(90deg,var(--accent),var(--accent2));color:#fff;border:none;box-shadow:0 6px 18px rgba(0,0,0,.3)}
+    .btn.primary:hover{transform:translateY(-2px) scale(1.03);filter:brightness(1.1)}
+    .btn.light{background:#fff;color:#111827;border:none;box-shadow:0 4px 12px rgba(0,0,0,.18)}
+    .btn.light:hover{transform:translateY(-2px) scale(1.03)}
+
+    /* --- Badges (GitHub + Inspire-HEP) --- */
+    .btn.badge{
+      padding:.55rem .7rem;
+      border-radius:9999px;
+      font-weight:800;
+      line-height:1;
+      display:inline-flex; align-items:center; justify-content:center;
+      gap:.4rem;
+      background:rgba(255,255,255,.12);
+      color:#fff; border:1px solid var(--border);
+      box-shadow:0 3px 10px rgba(0,0,0,.12);
+      min-width:42px; min-height:42px;
+    }
+    .btn.badge:hover{ transform:translateY(-2px) scale(1.03); filter:brightness(1.08) }
+    .btn.badge svg{ width:18px; height:18px; display:block }
+
+    /* theme-aware tweaks */
+    [data-theme="light"] .btn.badge{
+      background:#fff; color:#111827; border:1px solid var(--border);
+    }
+
+    /* Specific “iN” styling */
+    .btn.badge.inspire{
+      font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, sans-serif;
+      font-weight:900; letter-spacing:.2px;
+    }
+    .btn.badge.inspire .in{ font-size:.95rem }
+
+    /* Sections */
+    section{padding:4rem 1.2rem;max-width:1100px;margin:auto;position:relative;overflow:visible}
+    h2{margin-bottom:1.2rem;color:var(--text);font-size:clamp(1.8rem,3vw,2.4rem);font-weight:800;letter-spacing:.2px;position:relative}
+    h2::after{content:'';position:absolute;left:0;bottom:-.5rem;width:80px;height:5px;background:linear-gradient(90deg,var(--accent),var(--accent2));border-radius:3px}
+    .card{background:var(--card);padding:1.4rem;border-radius:var(--radius);box-shadow:0 6px 16px rgba(0,0,0,.15);color:var(--text)}
+    /* --- Card hover glow + lift (works for .card and .talk-card) --- */
+.card,
+.talk-card{
+  position:relative;
+  transition:
+    transform .25s cubic-bezier(.2,.6,.2,1),
+    box-shadow .25s cubic-bezier(.2,.6,.2,1),
+    background-color .25s ease;
+  will-change: transform, box-shadow;
+}
+
+/* subtle idle edge for depth */
+.card::before,
+.talk-card::before{
+  content:"";
+  position:absolute; inset:-2px;
+  border-radius:calc(var(--radius) + 2px);
+  pointer-events:none;
+  background:
+    radial-gradient(120% 120% at 10% 10%,
+      color-mix(in oklab, var(--accent) 25%, transparent) 0%,
+      transparent 60%)
+    ,
+    radial-gradient(120% 120% at 90% 90%,
+      color-mix(in oklab, var(--accent2) 25%, transparent) 0%,
+      transparent 60%);
+  opacity:.0; filter:blur(14px);
+  transition:opacity .25s ease, filter .25s ease, transform .25s ease;
+}
+
+
+/* hover/focus state: lift + glow ring */
+.card:hover,
+.card:focus-within,
+.talk-card:hover,
+.talk-card:focus-within{
+  transform:translateY(-3px);
+  box-shadow:
+    0 10px 24px rgba(0,0,0,.28),
+    0 0 0 1px color-mix(in oklab, var(--accent) 35%, var(--border));
+  background:
+    linear-gradient(180deg,
+      color-mix(in oklab, var(--card) 92%, transparent),
+      color-mix(in oklab, var(--card) 100%, transparent));
+}
+
+.card:hover::before,
+.card:focus-within::before,
+.talk-card:hover::before,
+.talk-card:focus-within::before{
+  opacity:.45; filter:blur(7px); transform:scale(1.01);
+}
+
+/* Light theme tuning: slightly stronger ring, softer shadow */
+[data-theme="light"] .card:hover,
+[data-theme="light"] .card:focus-within,
+[data-theme="light"] .talk-card:hover,
+[data-theme="light"] .talk-card:focus-within{
+  box-shadow:
+    0 10px 24px rgba(17,24,39,.12),
+    0 0 0 1px color-mix(in oklab, var(--accent2) 35%, var(--border));
+}
+
+/* Respect reduced motion */
+@media (prefers-reduced-motion: reduce){
+  .card, .talk-card{ transition:none }
+  .card:hover, .card:focus-within,
+  .talk-card:hover, .talk-card:focus-within{
+    transform:none;
+  }
+}
+
+    /* FULL-BLEED dotted backgrounds */
+    section.bg-feynman::before,
+    section.bg-neural::before{
+      content:"";
+      position:absolute;
+      top:0; bottom:0;
+      left:50%;
+      width:100vw;
+      transform:translateX(-50%);
+      pointer-events:none;
+      opacity:.14;
+      background-image:
+        radial-gradient(circle, color-mix(in oklab, var(--muted) 85%, transparent) 1.4px, transparent 1.9px),
+        radial-gradient(circle, color-mix(in oklab, var(--muted) 85%, transparent) 1.4px, transparent 1.9px);
+      background-size:18px 18px, 18px 18px;
+      background-position:0 0, 9px 9px;
+      mask-image:radial-gradient(1000px 500px at 50% 45%, #000 70%, transparent 100%);
+      -webkit-mask-image:radial-gradient(1000px 500px at 50% 45%, #000 70%, transparent 100%);
+    }
+    [data-theme="light"] section.bg-feynman::before,
+    [data-theme="light"] section.bg-neural::before{ opacity:.18; }
+
+    /* Work & Talks grids */
+    .work-grid{display:grid;gap:1.2rem;grid-template-columns:repeat(auto-fit,minmax(260px,1fr))}
+    .talks-grid{display:grid;gap:1.2rem;grid-template-columns:repeat(auto-fit,minmax(240px,1fr))}
+    .talk-card{background:var(--card);border-radius:var(--radius);overflow:hidden;box-shadow:0 6px 16px rgba(0,0,0,.15);display:flex;flex-direction:column;color:var(--text)}
+    .talk-card img{width:100%;height:300px;object-fit:cover}
+    .talk-card .pad{padding:1rem;flex:1;display:flex;flex-direction:column;justify-content:space-between}
+
+    /* Links */
+    [data-theme="dark"] main a:not(.btn),
+    [data-theme="dark"] section a:not(.btn),
+    [data-theme="dark"] .card a:not(.btn),
+    [data-theme="dark"] footer a:not(.btn){ color:#60a5fa; text-decoration:none }
+    [data-theme="dark"] main a:not(.btn):hover,
+    [data-theme="dark"] section a:not(.btn):hover,
+    [data-theme="dark"] .card a:not(.btn):hover,
+    [data-theme="dark"] footer a:not(.btn):hover,
+    [data-theme="dark"] main a:not(.btn):focus-visible,
+    [data-theme="dark"] section a:not(.btn):focus-visible,
+    [data-theme="dark"] .card a:not(.btn):focus-visible,
+    [data-theme="dark"] footer a:not(.btn):focus-visible{ color:#93c5fd; text-decoration:underline; text-underline-offset:3px }
+
+    [data-theme="light"] main a:not(.btn),
+    [data-theme="light"] section a:not(.btn),
+    [data-theme="light"] .card a:not(.btn),
+    [data-theme="light"] footer a:not(.btn){ color:#1d4ed8; text-decoration:none }
+    [data-theme="light"] main a:not(.btn):hover,
+    [data-theme="light"] section a:not(.btn):hover,
+    [data-theme="light"] .card a:not(.btn):hover,
+    [data-theme="light"] footer a:not(.btn):hover,
+    [data-theme="light"] main a:not(.btn):focus-visible,
+    [data-theme="light"] section a:not(.btn):focus-visible,
+    [data-theme="light"] .card a:not(.btn):focus-visible,
+    [data-theme="light"] footer a:not(.btn):focus-visible{ color:#0ea5e9; text-decoration:underline; text-underline-offset:3px }
+
+    /* Footer */
+    footer{text-align:center;padding:2rem;color:var(--muted);border-top:1px solid var(--border)}
+
+    /* Animations */
+    @keyframes portrait-pop{0%{opacity:0;transform:scale(.9) translateY(8px)}100%{opacity:1;transform:scale(1) translateY(0)}}
+    @keyframes portrait-float{0%,100%{transform:translateY(0)}50%{transform:translateY(-6px)}}
+    @keyframes heading-pop{0%{opacity:0;transform:translateY(10px) scale(.98)}100%{opacity:1;transform:translateY(0) scale(1)}}
+    @keyframes fade-up{0%{opacity:0;transform:translateY(14px)}100%{opacity:1;transform:translateY(0)}}
+    @media (prefers-reduced-motion: reduce){ .hero-text h1,.hero-text p,.cta,.hero-portrait .portrait{animation:none} }
+
+    /* Scroll-reveal */
+    .reveal{opacity:0; transform:translateY(16px); filter:saturate(.98); transition:opacity .6s cubic-bezier(.2,.6,.2,1), transform .6s cubic-bezier(.2,.6,.2,1)}
+    .reveal.is-visible{opacity:1; transform:none; filter:none}
+    @media (prefers-reduced-motion: reduce){ .reveal{opacity:1 !important; transform:none !important; transition:none !important} }
+
+    /* Publications formatting */
+    .work-grid .card a{display:block;font-weight:700;line-height:1.35;margin-bottom:.35rem}
+    .work-grid .card span{opacity:.85}
+    .work-grid .card p{margin:.2rem 0 0}
+    .work-grid .pub-meta{font-size:.9rem;opacity:.8;margin:.15rem 0 0}
+  </style>
+</head>
+<body>
+  <nav>
+    <a href="#Home" class="active">Home</a>
+    <a href="#About">About</a>
+    <a href="#Rinterests">Research</a>
+    <a href="#Work">Recent Work</a>
+    <a href="#Talks">Talks</a>
+    <a href="#Teaching">Teaching</a>
+    <a href="#Contact">Contact</a>
+    <button id="themeToggle" class="theme-toggle">🌗</button>
+  </nav>
+
+  <header id="Home" class="hero">
+    <div class="hero-inner">
+      <div class="hero-text">
+        <h1>Hi, I’m Ian Pang</h1>
+        <p>Physics PhD student at Rutgers University (NHETC), advised by Prof. David Shih. I build machine-learning methods for collider physics—spanning fast simulation, anomaly detection, foundation models, and open data.</p>
+        <div class="cta">
+      <a class="btn primary" href="#Work">View My Work</a>
+      <a class="btn light" href="#Contact">Get in Touch</a>
+
+      <!-- GitHub badge -->
+      <a class="btn badge" href="https://github.com/Ian-Pang"
+        target="_blank" rel="noopener" aria-label="GitHub profile">
+        <!-- Inline GitHub mark (no external asset) -->
+        <svg viewBox="0 0 16 16" aria-hidden="true" focusable="false" role="img">
+          <path fill="currentColor" d="M8 0C3.58 0 0 3.58 0 8a8 8 0 0 0 5.47 7.59c.4.07.55-.17.55-.38
+          0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52
+          -.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64
+          -.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82A7.53 7.53 0 0 1 8 
+          3.47c.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 
+          0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.19 0 .21.15.46.55.38A8 
+          8 0 0 0 16 8c0-4.42-3.58-8-8-8Z"/>
+        </svg>
+      </a>
+
+  <!-- Inspire-HEP badge (logo text “iN”) -->
+  <a class="btn badge inspire" href="https://inspirehep.net/authors/2170937"
+     target="_blank" rel="noopener" aria-label="Inspire-HEP profile">
+    <span class="in">iN</span>
+  </a>
+</div>
+
+      </div>
+      <figure class="hero-portrait">
+        <div class="portrait"><img src="images/ian_pang.png" alt="Ian Pang" /></div>
+      </figure>
+    </div>
+  </header>
+
+  <main>
+    <!-- About -->
+    <section id="About" class="bg-neural reveal">
+      <h2>About Me</h2>
+      <div class="card">
+        <p>I am currently a Physics PhD student at <a href="https://www.rutgers.edu" target="_blank" rel="noopener">Rutgers University</a> (USA), supervised by Prof. David Shih in the <a href="https://physics.rutgers.edu" target="_blank" rel="noopener">Department of Physics &amp; Astronomy</a>.</p>
+        <p>Previously, I completed the <a href="https://www.postgraduate.study.cam.ac.uk/courses/directory/maamasapm" target="_blank" rel="noopener">MASt in Applied Mathematics</a> at the <a href="https://www.cam.ac.uk" target="_blank" rel="noopener">University of Cambridge</a> (UK), and a <a href="https://www.ntu.edu.sg/education/undergraduate-programme/bachelor-of-science-in-physics-and-mathematical-sciences#curriculum" target="_blank" rel="noopener">BSc in Physics with a second major in Mathematics</a> at <a href="https://www.ntu.edu.sg" target="_blank" rel="noopener">Nanyang Technological University</a> (Singapore). In 2019, I did my undergraduate final year project at <a href="https://home.cern" target="_blank" rel="noopener">CERN</a>, working on global fits of the Constrained Minimally Supersymmetric Standard Model (CMSSM) under the supervision of Prof. John Ellis.</p>
+        <p>Outside of research, I enjoy racket sports like tennis and squash. I also love food and travel—exploring new cities and their local cuisine.</p>
+      </div>
+    </section>
+
+    <section id="Rinterests" class="bg-feynman reveal">
+      <h2>Research Interests</h2>
+      <div class="card">
+        <p>I’m completing my Ph.D. in Physics at Rutgers University (New High Energy Theory Center) under Prof. David Shih, with an anticipated graduation in <strong>June 2025</strong>. My research develops machine-learning methods for collider physics with emphasis on <strong>fast simulation</strong>, <strong>anomaly detection</strong>, <strong>foundation models</strong>, and <strong>open data</strong>. The goal is not only to make existing analyses faster and more efficient, but to broaden the scope of data-driven discovery.</p>
+        <p><strong>Fast calorimeter simulation.</strong> I design flow-based generative models (normalizing flows) as surrogates for GEANT4 calorimeter showers. These models deliver large speedups while maintaining fidelity, and the same learned densities/latents double as <em>calibration tools</em> and as rich <em>anomaly scores</em>.</p>
+        <p><strong>Unified ML frameworks.</strong> A recurring theme is showing that one architecture can serve multiple physics roles: (i) accelerate detector simulation, (ii) support unsupervised/semi-supervised <em>anomaly detection</em>, and (iii) enable <em>calibration</em> and likelihood-based inference.</p>
+        <p><strong>Foundation models for HEP.</strong> Recently I’ve explored pretraining on large collider datasets with self-supervised objectives, then fine-tuning for downstream tasks. This yields consistent gains across classification, regression, and simulation-adjacent tasks and points toward scalable, general-purpose ML for HEP.</p>
+        <p><strong>Open science.</strong> I’m committed to accessibility and reproducibility—for example, contributing to initiatives such as the Aspen Open Jets dataset and releasing code/baselines where possible.</p>
+        <p>See <a href="#Work">recent work</a> below for papers and slides.</p>
+      </div>
+    </section>
+
+<section id="Work" class="bg-neural reveal">
+  <h2>Recent Work</h2>
+  <div class="work-grid">
+    <div class="card" data-date="2025-06-01">
+      <a href="https://journals.aps.org/prd/abstract/10.1103/PhysRevD.111.076004" target="_blank" rel="noopener">
+        Unifying Simulation and Inference with Normalizing Flows, <span>Phys. Rev. D 111, 076004 (2025)</span>
+      </a>
+      <p>Shows how a single NF framework supports simulation, calibration, and likelihood-based inference.</p>
+      <p class="pub-meta"><a href="https://arxiv.org/abs/2404.18992" target="_blank" rel="noopener">arXiv:2404.18992</a></p>
+    </div>
+
+    <div class="card" data-date="2025-03-01">
+      <a href="https://iopscience.iop.org/article/10.1088/2632-2153/ade58f" target="_blank" rel="noopener">
+        Aspen Open Jets: unlocking LHC data for foundation models in particle physics, <span>Mach. Learn. Sci. Tech. 6 (2025) 3, 030601</span>
+      </a>
+      <p>Open, standardized jets dataset enabling pretraining and benchmarking of foundation models for HEP.</p>
+      <p class="pub-meta"><a href="https://arxiv.org/abs/2412.10504" target="_blank" rel="noopener">arXiv:2412.10504</a> • Companion dataset: <a href="https://www.fdr.uni-hamburg.de/record/16505" target="_blank" rel="noopener">Aspen Open Jets (data portal)</a></p>
+    </div>
+
+    <div class="card" data-date="2024-09-01">
+      <a href="https://link.aps.org/doi/10.1103/PhysRevD.110.035036" target="_blank" rel="noopener">
+        Anomaly detection with flow-based fast calorimeter simulators, <span>Phys. Rev. D 110, 035036 (2024)</span>
+      </a>
+      <p>Uses learned likelihoods/latents from fast simulators as powerful unsupervised anomaly scores.</p>
+      <p class="pub-meta"><a href="https://arxiv.org/abs/2312.11618" target="_blank" rel="noopener">arXiv:2312.11618</a></p>
+    </div>
+
+    <div class="card" data-date="2024-03-01">
+      <a href="https://link.aps.org/doi/10.1103/PhysRevD.109.033006" target="_blank" rel="noopener">
+        Inductive Simulation of Calorimeter Showers with Normalizing Flows, <span>Phys. Rev. D 109, 033006 (2024)</span>
+      </a>
+      <p>Inductive NF simulator that scales CaloFlow to higher-dimensional calorimeter data.</p>
+      <p class="pub-meta"><a href="https://arxiv.org/abs/2305.11934" target="_blank" rel="noopener">arXiv:2305.11934</a></p>
+    </div>
+
+    <div class="card" data-date="2024-05-01">
+      <a href="https://journals.aps.org/prd/abstract/10.1103/PhysRevD.109.092009" target="_blank" rel="noopener">
+        Calorimeter shower superresolution (SuperCalo), <span>Phys. Rev. D 109, 092009 (2024)</span>
+      </a>
+      <p>Flow-based super-resolution for fast, high-fidelity calorimeter simulation.</p>
+      <p class="pub-meta"><a href="https://arxiv.org/abs/2308.11700" target="_blank" rel="noopener">arXiv:2308.11700</a></p>
+    </div>
+
+    <div class="card" data-date="2024-05-15">
+      <a href="https://scipost.org/SciPostPhys.16.5.126" target="_blank" rel="noopener">
+        CaloFlow for CaloChallenge Dataset 1, <span>SciPost Phys. 16, 126 (2024)</span>
+      </a>
+      <p>Normalizing-flow simulator validated on CaloChallenge 2022 (Dataset 1).</p>
+      <p class="pub-meta"><a href="https://arxiv.org/abs/2210.14245" target="_blank" rel="noopener">arXiv:2210.14245</a></p>
+    </div>
+  </div>
+</section>
+
+
+  <section id="Talks" class="bg-feynman reveal">
+  <h2>Talks</h2>
+  <div class="talks-grid">
+    <!-- Existing talks with images -->
+    <div class="talk-card">
+      <img src="images/thumbs/serin.png" alt="Rutgers">
+      <div class="pad">
+        <h3>ML4Jets 2022 • Rutgers</h3>
+        <a href="https://indico.cern.ch/event/1159913/contributions/5062744/attachments/2539580/4371555/ML4Jets_talk_ian_pang.pdf" target="_blank" rel="noopener">CaloFlow for CaloChallenge</a>
+      </div>
+    </div>
+
+    <div class="talk-card">
+      <img src="images/thumbs/frascati.png" alt="Frascati">
+      <div class="pad">
+        <h3>CaloChallenge 2023 • Frascati</h3>
+        <a href="https://agenda.infn.it/event/34036/contributions/200895/attachments/105940/149041/challenge_workshop.pdf" target="_blank" rel="noopener">Inductive CaloFlow</a>
+      </div>
+    </div>
+    
+    <div class="talk-card">
+      <img src="images/thumbs/hamburg.png" alt="Hamburg">
+      <div class="pad">
+        <h3>ML4Jets 2023 • Hamburg</h3>
+        <a href="https://indico.cern.ch/event/1253794/contributions/5588620/attachments/2746575/4779254/ML4Jets_2023.pdf" target="_blank" rel="noopener">SuperCalo</a>
+      </div>
+    </div>
+
+    <!-- Newer talks -->
+    <div class="talk-card">
+      <img src="images/thumbs/pitts.jpg" alt="Pittsburgh">
+      <div class="pad">
+        <h3>Pheno 2024 • Pittsburgh</h3>
+        <a href="https://indico.global/event/805/contributions/23749/attachments/11207/16579/ianpang_pheno24.pdf" target="_blank" rel="noopener">
+          The versatility of flow-based fast calorimeter surrogate models
+        </a>
+      </div>
+    </div>
+
+    <div class="talk-card">
+      <img src="images/thumbs/paris.jpg" alt="Paris">
+      <div class="pad">
+        <h3>ML4Jets 2024 • Paris</h3>
+        <a href="https://indico.cern.ch/event/1386125/contributions/6185289/attachments/2959638/5205143/ML4Jets_AOJ.pdf" target="_blank" rel="noopener">
+          Introducing Aspen Open Jets: a real-world ML-ready dataset for jet physics
+        </a>
+        <a href="https://indico.cern.ch/event/1386125/contributions/6084736/attachments/2962487/5212153/ML4Jets_calo.pdf" target="_blank" rel="noopener">
+          The versatility of flow-based fast calorimeter surrogate models
+        </a>
+      </div>
+    </div>
+
+    <div class="talk-card">
+      <img src="images/thumbs/caltech.jpg" alt="Caltech">
+      <div class="pad">
+        <h3>ML4Jets 2025 • Caltech</h3>
+        <a href="https://indico.cern.ch/event/1526677/contributions/6619374/attachments/3120123/5532723/ML4Jets_conditional.pdf" target="_blank" rel="noopener">
+          Get Your Jets in Shape: Conditioning Heads and Backbones
+        </a>
+        <a href="https://indico.cern.ch/event/1526677/contributions/6619373/attachments/3121384/5535175/ML4Jets_optimal_v2.pdf" target="_blank" rel="noopener">
+          Comparing Continuous and Tokenized Jet Generation Approaches for Precision Modeling
+        </a>
+      </div>
+    </div>
+  </div> <!-- /.talks-grid -->
+</section> <!-- /#Talks -->
+
+
+<section id="Teaching" class="reveal">
+  <h2>Teaching</h2>
+  <div class="card">
+    <ul>
+      <li>General Physics I Lab (Fall 2021)</li>
+      <li>Analytical Physics IIb Lab (Spring 2022)</li>
+      <li>General Physics II Recitation (Fall 2022)</li>
+      <li>Extended General Physics I Recitation (Spring 2023)</li>
+    </ul>
+  </div>
+</section>
+
+
+    <section id="Contact" class="reveal">
+      <h2>Contact</h2>
+      <div class="card">
+        <p>Email: <a href="mailto:ian.pang@physics.rutgers.edu">ian.pang@physics.rutgers.edu</a></p>
+      </div>
+    </section>
+  </main>
+
+  <footer>© <span id="year"></span> Ian Pang</footer>
+
+  <script>
+    // Footer year
+    document.getElementById('year').textContent = new Date().getFullYear();
+
+    // Theme toggle
+    const root=document.documentElement; const saved=localStorage.getItem('theme');
+    if(saved){root.setAttribute('data-theme',saved);}else if(!root.getAttribute('data-theme')){root.setAttribute('data-theme',matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light');}
+    document.getElementById('themeToggle').addEventListener('click',()=>{const cur=root.getAttribute('data-theme')|| (matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light');const next=cur==='dark'?'light':'dark';root.setAttribute('data-theme',next);localStorage.setItem('theme',next);});
+
+    // Section fade-in on scroll
+    (function(){
+      const reduce = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches; if(reduce) return;
+      const sections=[...document.querySelectorAll('main section')]; sections.forEach(s=>s.classList.add('reveal'));
+      const io=new IntersectionObserver((entries,obs)=>{entries.forEach(e=>{if(e.isIntersecting){const el=e.target; el.classList.add('is-visible'); obs.unobserve(el);}})},{rootMargin:'0px 0px -10% 0px',threshold:0.15});
+      sections.forEach(s=>io.observe(s));
+    })();
+  </script>
+</body>
+</html>
