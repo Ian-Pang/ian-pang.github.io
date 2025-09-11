@@ -233,10 +233,33 @@
     .work-grid .card span{opacity:.85}
     .work-grid .card p{margin:.2rem 0 0}
     .work-grid .pub-meta{font-size:.9rem;opacity:.8;margin:.15rem 0 0}
+
+    /* === Hamburger (desktop unchanged) === */
+  .hamburger{ display:none; background:none; border:1px solid var(--border); color:#fff;
+    border-radius:.6rem; padding:.55rem .7rem; line-height:1; cursor:pointer }
+  .mobile-panel{ display:none; }
+  .mobile-panel.open{ display:block; }
+
+  @media (max-width:740px){
+    /* Keep sticky look, but space items and show hamburger */
+    nav{ justify-content:space-between; gap:.6rem; padding:.6rem .8rem; }
+    nav .links{ display:none; }          /* hide inline links on phones */
+    .hamburger{ display:inline-flex; }   /* show hamburger on phones */
+
+    /* Slide-down area for mobile links */
+    .mobile-panel{ border-top:1px solid var(--border); background:var(--nav); }
+    .mobile-panel a{ display:block; padding:.85rem 1rem; color:#fff; }
+    .mobile-panel a:active{ background:rgba(255,255,255,.08); }
+
+    /* Ensure in-page anchors aren’t hidden beneath sticky nav */
+    section{ scroll-margin-top:80px; }
+  }
+
   </style>
 </head>
 <body>
   <nav>
+  <div class="links">
     <a href="#Home" class="active">Home</a>
     <a href="#About">About</a>
     <a href="#Rinterests">Research</a>
@@ -244,8 +267,13 @@
     <a href="#Talks">Talks</a>
     <a href="#Teaching">Teaching</a>
     <a href="#Contact">Contact</a>
-    <button id="themeToggle" class="theme-toggle">🌗</button>
-  </nav>
+  </div>
+  <button id="themeToggle" class="theme-toggle" aria-label="Toggle theme">🌗</button>
+  <button id="hamburger" class="hamburger" aria-controls="mobilePanel" aria-expanded="false" aria-label="Open menu">☰</button>
+</nav>
+<!-- Mobile panel sits right under the sticky nav -->
+<div id="mobilePanel" class="mobile-panel" hidden></div>
+
 
   <header id="Home" class="hero">
     <div class="hero-inner">
@@ -469,6 +497,40 @@
       const io=new IntersectionObserver((entries,obs)=>{entries.forEach(e=>{if(e.isIntersecting){const el=e.target; el.classList.add('is-visible'); obs.unobserve(el);}})},{rootMargin:'0px 0px -10% 0px',threshold:0.15});
       sections.forEach(s=>io.observe(s));
     })();
+
+    // --- Mobile hamburger menu (minimal) ---
+    const mobPanel = document.getElementById('mobilePanel');
+    const ham = document.getElementById('hamburger');
+    const desktopLinks = document.querySelectorAll('nav .links a');
+
+    // Build mobile link list from your desktop links
+    mobPanel.innerHTML = [...desktopLinks]
+      .map(a => `<a href="${a.getAttribute('href')}">${a.textContent}</a>`)
+      .join('');
+
+    // Toggle open/close
+    const toggleMob = () => {
+      const open = ham.getAttribute('aria-expanded') === 'true';
+      ham.setAttribute('aria-expanded', String(!open));
+      mobPanel.classList.toggle('open', !open);
+      mobPanel.hidden = open;
+    };
+    ham.addEventListener('click', toggleMob);
+
+    // Close on link tap
+    mobPanel.addEventListener('click', (e) => {
+      if(e.target.tagName === 'A'){
+        ham.setAttribute('aria-expanded','false');
+        mobPanel.classList.remove('open');
+        mobPanel.hidden = true;
+      }
+    });
+
+    // Close on Escape
+    window.addEventListener('keydown', (e) => {
+      if(e.key === 'Escape' && mobPanel.classList.contains('open')) toggleMob();
+    });
+
   </script>
 </body>
 </html>
