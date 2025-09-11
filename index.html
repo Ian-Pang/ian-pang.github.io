@@ -3,8 +3,15 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="theme-color" content="#0b1020" media="(prefers-color-scheme: dark)">
+  <meta name="theme-color" content="#f6f8ff" media="(prefers-color-scheme: light)">
   <title>Ian Pang – Physics</title>
+
   <style>
+    /* ---------- Global sanity ---------- */
+    *,*::before,*::after{ box-sizing:border-box }
+    img{ max-width:100%; height:auto; display:block }
+
     :root{
       color-scheme: dark;
       --bg:#0b1020; --text:#e5e7eb; --muted:#a9b2d0;
@@ -12,6 +19,7 @@
       --accent:#7c3aed; --accent2:#22d3ee;
       --border:rgba(255,255,255,.15);
       --radius:14px;
+      --safe-top: env(safe-area-inset-top, 0px);
     }
     :root[data-theme="light"]{
       color-scheme: light;
@@ -24,150 +32,103 @@
 
     /* Base */
     html,body{height:100%}
-    body{margin:0;font-family:system-ui, -apple-system, Segoe UI, Roboto, sans-serif;background:var(--bg);color:var(--text);line-height:1.7}
+    body{
+      margin:0;
+      font-family:system-ui,-apple-system,Segoe UI,Roboto,'Helvetica Neue','Noto Sans','Liberation Sans',Arial,sans-serif;
+      background:var(--bg);color:var(--text);line-height:1.7;
+      -webkit-text-size-adjust:100%; text-size-adjust:100%;
+    }
     a{color:inherit;text-decoration:none}
 
-    /* Nav (always dark in light mode) */
-    nav{position:sticky;top:0;display:flex;justify-content:center;gap:.6rem;background:var(--nav);padding:.8rem 1.2rem;z-index:1000;backdrop-filter:saturate(150%) blur(12px);border-bottom:1px solid var(--border)}
-    nav a{padding:.5rem 1rem;border-radius:var(--radius);font-weight:600;color:#fff}
+    /* Skip link */
+    .skip-link{position:absolute;left:-9999px;top:auto;width:1px;height:1px;overflow:hidden}
+    .skip-link:focus{left:1rem;top:1rem;width:auto;height:auto;padding:.6rem .8rem;z-index:2000;background:#000;color:#fff;border-radius:.5rem}
+
+    /* Nav (sticky) */
+    nav{
+      position:sticky; top:0; inset-inline:0;
+      display:flex; align-items:center; justify-content:center; gap:.6rem;
+      background:var(--nav);
+      padding:calc(.55rem + var(--safe-top)) 1rem .55rem;
+      z-index:1000; backdrop-filter:saturate(150%) blur(12px);
+      border-bottom:1px solid var(--border);
+    }
+    nav a{padding:.625rem .9rem;border-radius:var(--radius);font-weight:600;color:#fff}
     nav a:hover,nav a.active{background:rgba(255,255,255,.1)}
-    .theme-toggle{margin-left:auto;background:none;border:1px solid var(--border);color:#fff;border-radius:50%;cursor:pointer;padding:.5rem}
+    .theme-toggle{background:none;border:1px solid var(--border);color:#fff;border-radius:50%;cursor:pointer;padding:.5rem;line-height:0}
+
+    /* Hamburger (hidden on desktop) */
+    .hamburger{display:none;background:none;border:1px solid var(--border);color:#fff;border-radius:.6rem;padding:.55rem .7rem;line-height:1;cursor:pointer}
+    .mobile-panel{display:none}
 
     /* Hero */
-    header.hero{position:relative;min-height:60vh;background:url('images/nyc_skyline.png') center/cover no-repeat;display:flex;align-items:center;justify-content:center;padding:3rem 5vw}
-    header.hero::before{content:"";position:absolute;inset:0;background:rgba(0,0,0,.6)}
-    .hero-inner{position:relative;z-index:1;display:grid;grid-template-columns:1.1fr .9fr;gap:2rem;align-items:center;max-width:1200px;width:100%}
-    .hero-text h1{margin:0 0 1rem;font-size:3.6rem;line-height:1.2;text-shadow:0 3px 8px rgba(0,0,0,.7);color:#fff;animation:heading-pop .7s ease both}
-    .hero-text p{max-width:660px;font-size:1.25rem;font-weight:500;text-shadow:0 2px 6px rgba(0,0,0,.65);color:#f5f5f5;animation:fade-up .85s ease .12s both}
+    header.hero{
+      position:relative; min-height:65vh;
+      background:url('images/nyc_skyline.png') center/cover no-repeat;
+      display:flex; align-items:center; justify-content:center;
+      padding:2.2rem 4vw;
+    }
+    header.hero::before{content:"";position:absolute;inset:0;background:rgba(0,0,0,.55)}
+    .hero-inner{
+      position:relative; z-index:1;
+      display:grid; grid-template-columns:1.1fr .9fr; gap:2rem; align-items:center;
+      max-width:1200px; width:100%;
+    }
+    .hero-text h1{
+      margin:0 0 .8rem;
+      font-size:clamp(1.8rem,4vw,3.6rem); line-height:1.15;
+      text-shadow:0 3px 8px rgba(0,0,0,.7); color:#fff;
+      animation:heading-pop .7s ease both;
+    }
+    .hero-text p{
+      max-width:66ch; font-size:clamp(1rem,2.2vw,1.25rem); font-weight:500;
+      text-shadow:0 2px 6px rgba(0,0,0,.65); color:#f5f5f5;
+      animation:fade-up .85s ease .12s both;
+    }
     .hero-portrait{justify-self:center}
-    .hero-portrait .portrait{width:300px;height:300px;border-radius:28px;overflow:hidden;border:5px solid #fff;box-shadow:0 12px 30px rgba(0,0,0,.6);animation:portrait-pop .8s ease both, portrait-float 6s ease-in-out 1s infinite;transition:box-shadow .25s ease, transform .2s ease}
-    .hero-portrait .portrait:hover{box-shadow:0 14px 36px rgba(0,0,0,.55), 0 0 0 3px color-mix(in oklab, var(--accent) 40%, transparent), 0 0 24px color-mix(in oklab, var(--accent2) 35%, transparent)}
+    .hero-portrait .portrait{
+      width:min(60vw,300px); height:min(60vw,300px);
+      border-radius:28px; overflow:hidden; border:5px solid #fff;
+      box-shadow:0 12px 30px rgba(0,0,0,.6);
+      animation:portrait-pop .8s ease both, portrait-float 6s ease-in-out 1s infinite;
+      transition:box-shadow .25s ease, transform .2s ease;
+    }
+    .hero-portrait .portrait:hover{box-shadow:0 14px 36px rgba(0,0,0,.55),0 0 0 3px color-mix(in oklab, var(--accent) 40%, transparent),0 0 24px color-mix(in oklab, var(--accent2) 35%, transparent)}
     .hero-portrait img{width:100%;height:100%;object-fit:cover}
 
     /* Buttons */
     .cta{display:flex;gap:.8rem;flex-wrap:wrap;margin-top:1.2rem;animation:fade-up 1s ease .25s both}
-    .btn{display:inline-flex;align-items:center;gap:.5rem;padding:.9rem 1.4rem;border-radius:var(--radius);font-weight:700;letter-spacing:.3px;cursor:pointer;transition:transform .2s ease,box-shadow .2s ease,filter .2s ease;text-decoration:none}
+    .btn{display:inline-flex;align-items:center;gap:.5rem;padding:.9rem 1.2rem;border-radius:var(--radius);font-weight:700;letter-spacing:.3px;cursor:pointer;transition:transform .2s ease,box-shadow .2s ease,filter .2s ease;text-decoration:none;min-height:44px}
     .btn.primary{background:linear-gradient(90deg,var(--accent),var(--accent2));color:#fff;border:none;box-shadow:0 6px 18px rgba(0,0,0,.3)}
     .btn.primary:hover{transform:translateY(-2px) scale(1.03);filter:brightness(1.1)}
     .btn.light{background:#fff;color:#111827;border:none;box-shadow:0 4px 12px rgba(0,0,0,.18)}
     .btn.light:hover{transform:translateY(-2px) scale(1.03)}
 
-    /* --- Badges (GitHub + Inspire-HEP) --- */
-    .btn.badge{
-      padding:.55rem .7rem;
-      border-radius:9999px;
-      font-weight:800;
-      line-height:1;
-      display:inline-flex; align-items:center; justify-content:center;
-      gap:.4rem;
-      background:rgba(255,255,255,.12);
-      color:#fff; border:1px solid var(--border);
-      box-shadow:0 3px 10px rgba(0,0,0,.12);
-      min-width:42px; min-height:42px;
-    }
+    /* Badges */
+    .btn.badge{padding:.55rem .7rem;border-radius:9999px;font-weight:800;line-height:1;display:inline-flex;align-items:center;justify-content:center;gap:.4rem;background:rgba(255,255,255,.12);color:#fff;border:1px solid var(--border);box-shadow:0 3px 10px rgba(0,0,0,.12);min-width:42px;min-height:42px}
     .btn.badge:hover{ transform:translateY(-2px) scale(1.03); filter:brightness(1.08) }
     .btn.badge svg{ width:18px; height:18px; display:block }
-
-    /* theme-aware tweaks */
-    [data-theme="light"] .btn.badge{
-      background:#fff; color:#111827; border:1px solid var(--border);
-    }
-
-    /* Specific “iN” styling */
-    .btn.badge.inspire{
-      font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, sans-serif;
-      font-weight:900; letter-spacing:.2px;
-    }
+    [data-theme="light"] .btn.badge{background:#fff;color:#111827;border:1px solid var(--border)}
+    .btn.badge.inspire{font-family:ui-sans-serif,system-ui,-apple-system,Segoe UI,Roboto,sans-serif;font-weight:900;letter-spacing:.2px}
     .btn.badge.inspire .in{ font-size:.95rem }
 
     /* Sections */
-    section{padding:4rem 1.2rem;max-width:1100px;margin:auto;position:relative;overflow:visible}
-    h2{margin-bottom:1.2rem;color:var(--text);font-size:clamp(1.8rem,3vw,2.4rem);font-weight:800;letter-spacing:.2px;position:relative}
+    section{padding:3rem 1rem;max-width:1100px;margin:auto;position:relative;overflow:visible;scroll-margin-top:80px}
+    h2{margin-bottom:1.2rem;color:var(--text);font-size:clamp(1.6rem,3.5vw,2.4rem);font-weight:800;letter-spacing:.2px;position:relative}
     h2::after{content:'';position:absolute;left:0;bottom:-.5rem;width:80px;height:5px;background:linear-gradient(90deg,var(--accent),var(--accent2));border-radius:3px}
-    .card{background:var(--card);padding:1.4rem;border-radius:var(--radius);box-shadow:0 6px 16px rgba(0,0,0,.15);color:var(--text)}
-    /* --- Card hover glow + lift (works for .card and .talk-card) --- */
-.card,
-.talk-card{
-  position:relative;
-  transition:
-    transform .25s cubic-bezier(.2,.6,.2,1),
-    box-shadow .25s cubic-bezier(.2,.6,.2,1),
-    background-color .25s ease;
-  will-change: transform, box-shadow;
-}
+    .card{background:var(--card);padding:clamp(1rem,2.5vw,1.4rem);border-radius:var(--radius);box-shadow:0 6px 16px rgba(0,0,0,.15);color:var(--text)}
 
-/* subtle idle edge for depth */
-.card::before,
-.talk-card::before{
-  content:"";
-  position:absolute; inset:-2px;
-  border-radius:calc(var(--radius) + 2px);
-  pointer-events:none;
-  background:
-    radial-gradient(120% 120% at 10% 10%,
-      color-mix(in oklab, var(--accent) 25%, transparent) 0%,
-      transparent 60%)
-    ,
-    radial-gradient(120% 120% at 90% 90%,
-      color-mix(in oklab, var(--accent2) 25%, transparent) 0%,
-      transparent 60%);
-  opacity:.0; filter:blur(14px);
-  transition:opacity .25s ease, filter .25s ease, transform .25s ease;
-}
+    /* Hover/lift */
+    .card,.talk-card{position:relative;transition:transform .25s cubic-bezier(.2,.6,.2,1),box-shadow .25s cubic-bezier(.2,.6,.2,1),background-color .25s ease;will-change:transform,box-shadow}
+    .card::before,.talk-card::before{content:"";position:absolute;inset:-2px;border-radius:calc(var(--radius) + 2px);pointer-events:none;background:radial-gradient(120% 120% at 10% 10%,color-mix(in oklab, var(--accent) 25%, transparent) 0%,transparent 60%),radial-gradient(120% 120% at 90% 90%,color-mix(in oklab, var(--accent2) 25%, transparent) 0%,transparent 60%);opacity:.0;filter:blur(14px);transition:opacity .25s ease,filter .25s ease,transform .25s ease}
+    .card:hover,.card:focus-within,.talk-card:hover,.talk-card:focus-within{transform:translateY(-3px);box-shadow:0 10px 24px rgba(0,0,0,.28),0 0 0 1px color-mix(in oklab, var(--accent) 35%, var(--border));background:linear-gradient(180deg,color-mix(in oklab, var(--card) 92%, transparent),color-mix(in oklab, var(--card) 100%, transparent))}
+    .card:hover::before,.card:focus-within::before,.talk-card:hover::before,.talk-card:focus-within::before{opacity:.45;filter:blur(7px);transform:scale(1.01)}
+    [data-theme="light"] .card:hover,[data-theme="light"] .card:focus-within,[data-theme="light"] .talk-card:hover,[data-theme="light"] .talk-card:focus-within{box-shadow:0 10px 24px rgba(17,24,39,.12),0 0 0 1px color-mix(in oklab, var(--accent2) 35%, var(--border))}
 
-
-/* hover/focus state: lift + glow ring */
-.card:hover,
-.card:focus-within,
-.talk-card:hover,
-.talk-card:focus-within{
-  transform:translateY(-3px);
-  box-shadow:
-    0 10px 24px rgba(0,0,0,.28),
-    0 0 0 1px color-mix(in oklab, var(--accent) 35%, var(--border));
-  background:
-    linear-gradient(180deg,
-      color-mix(in oklab, var(--card) 92%, transparent),
-      color-mix(in oklab, var(--card) 100%, transparent));
-}
-
-.card:hover::before,
-.card:focus-within::before,
-.talk-card:hover::before,
-.talk-card:focus-within::before{
-  opacity:.45; filter:blur(7px); transform:scale(1.01);
-}
-
-/* Light theme tuning: slightly stronger ring, softer shadow */
-[data-theme="light"] .card:hover,
-[data-theme="light"] .card:focus-within,
-[data-theme="light"] .talk-card:hover,
-[data-theme="light"] .talk-card:focus-within{
-  box-shadow:
-    0 10px 24px rgba(17,24,39,.12),
-    0 0 0 1px color-mix(in oklab, var(--accent2) 35%, var(--border));
-}
-
-/* Respect reduced motion */
-@media (prefers-reduced-motion: reduce){
-  .card, .talk-card{ transition:none }
-  .card:hover, .card:focus-within,
-  .talk-card:hover, .talk-card:focus-within{
-    transform:none;
-  }
-}
-
-    /* FULL-BLEED dotted backgrounds */
-    section.bg-feynman::before,
-    section.bg-neural::before{
-      content:"";
-      position:absolute;
-      top:0; bottom:0;
-      left:50%;
-      width:100vw;
-      transform:translateX(-50%);
-      pointer-events:none;
-      opacity:.14;
+    /* Background dots */
+    section.bg-feynman::before,section.bg-neural::before{
+      content:"";position:absolute;top:0;bottom:0;left:50%;width:100vw;transform:translateX(-50%);
+      pointer-events:none;opacity:.14;
       background-image:
         radial-gradient(circle, color-mix(in oklab, var(--muted) 85%, transparent) 1.4px, transparent 1.9px),
         radial-gradient(circle, color-mix(in oklab, var(--muted) 85%, transparent) 1.4px, transparent 1.9px);
@@ -176,42 +137,20 @@
       mask-image:radial-gradient(1000px 500px at 50% 45%, #000 70%, transparent 100%);
       -webkit-mask-image:radial-gradient(1000px 500px at 50% 45%, #000 70%, transparent 100%);
     }
-    [data-theme="light"] section.bg-feynman::before,
-    [data-theme="light"] section.bg-neural::before{ opacity:.18; }
+    [data-theme="light"] section.bg-feynman::before,[data-theme="light"] section.bg-neural::before{ opacity:.18 }
 
-    /* Work & Talks grids */
-    .work-grid{display:grid;gap:1.2rem;grid-template-columns:repeat(auto-fit,minmax(260px,1fr))}
-    .talks-grid{display:grid;gap:1.2rem;grid-template-columns:repeat(auto-fit,minmax(240px,1fr))}
+    /* Grids */
+    .work-grid{display:grid;gap:1rem;grid-template-columns:repeat(auto-fit,minmax(240px,1fr))}
+    .talks-grid{display:grid;gap:1rem;grid-template-columns:repeat(auto-fit,minmax(220px,1fr))}
     .talk-card{background:var(--card);border-radius:var(--radius);overflow:hidden;box-shadow:0 6px 16px rgba(0,0,0,.15);display:flex;flex-direction:column;color:var(--text)}
     .talk-card img{width:100%;height:300px;object-fit:cover}
-    .talk-card .pad{padding:1rem;flex:1;display:flex;flex-direction:column;justify-content:space-between}
+    .talk-card .pad{padding:1rem;flex:1;display:flex;flex-direction:column;gap:.55rem}
 
-    /* Links */
-    [data-theme="dark"] main a:not(.btn),
-    [data-theme="dark"] section a:not(.btn),
-    [data-theme="dark"] .card a:not(.btn),
-    [data-theme="dark"] footer a:not(.btn){ color:#60a5fa; text-decoration:none }
-    [data-theme="dark"] main a:not(.btn):hover,
-    [data-theme="dark"] section a:not(.btn):hover,
-    [data-theme="dark"] .card a:not(.btn):hover,
-    [data-theme="dark"] footer a:not(.btn):hover,
-    [data-theme="dark"] main a:not(.btn):focus-visible,
-    [data-theme="dark"] section a:not(.btn):focus-visible,
-    [data-theme="dark"] .card a:not(.btn):focus-visible,
-    [data-theme="dark"] footer a:not(.btn):focus-visible{ color:#93c5fd; text-decoration:underline; text-underline-offset:3px }
-
-    [data-theme="light"] main a:not(.btn),
-    [data-theme="light"] section a:not(.btn),
-    [data-theme="light"] .card a:not(.btn),
-    [data-theme="light"] footer a:not(.btn){ color:#1d4ed8; text-decoration:none }
-    [data-theme="light"] main a:not(.btn):hover,
-    [data-theme="light"] section a:not(.btn):hover,
-    [data-theme="light"] .card a:not(.btn):hover,
-    [data-theme="light"] footer a:not(.btn):hover,
-    [data-theme="light"] main a:not(.btn):focus-visible,
-    [data-theme="light"] section a:not(.btn):focus-visible,
-    [data-theme="light"] .card a:not(.btn):focus-visible,
-    [data-theme="light"] footer a:not(.btn):focus-visible{ color:#0ea5e9; text-decoration:underline; text-underline-offset:3px }
+    /* Link colors */
+    [data-theme="dark"] main a:not(.btn),[data-theme="dark"] section a:not(.btn),[data-theme="dark"] .card a:not(.btn),[data-theme="dark"] footer a:not(.btn){ color:#60a5fa; text-decoration:none }
+    [data-theme="dark"] main a:not(.btn):hover,[data-theme="dark"] section a:not(.btn):hover,[data-theme="dark"] .card a:not(.btn):hover,[data-theme="dark"] footer a:not(.btn):hover,[data-theme="dark"] main a:not(.btn):focus-visible,[data-theme="dark"] section a:not(.btn):focus-visible,[data-theme="dark"] .card a:not(.btn):focus-visible,[data-theme="dark"] footer a:not(.btn):focus-visible{ color:#93c5fd; text-decoration:underline; text-underline-offset:3px }
+    [data-theme="light"] main a:not(.btn),[data-theme="light"] section a:not(.btn),[data-theme="light"] .card a:not(.btn),[data-theme="light"] footer a:not(.btn){ color:#1d4ed8; text-decoration:none }
+    [data-theme="light"] main a:not(.btn):hover,[data-theme="light"] section a:not(.btn):hover,[data-theme="light"] .card a:not(.btn):hover,[data-theme="light"] footer a:not(.btn):hover,[data-theme="light"] main a:not(.btn):focus-visible,[data-theme="light"] section a:not(.btn):focus-visible,[data-theme="light"] .card a:not(.btn):focus-visible,[data-theme="light"] footer a:not(.btn):focus-visible{ color:#0ea5e9; text-decoration:underline; text-underline-offset:3px }
 
     /* Footer */
     footer{text-align:center;padding:2rem;color:var(--muted);border-top:1px solid var(--border)}
@@ -221,59 +160,65 @@
     @keyframes portrait-float{0%,100%{transform:translateY(0)}50%{transform:translateY(-6px)}}
     @keyframes heading-pop{0%{opacity:0;transform:translateY(10px) scale(.98)}100%{opacity:1;transform:translateY(0) scale(1)}}
     @keyframes fade-up{0%{opacity:0;transform:translateY(14px)}100%{opacity:1;transform:translateY(0)}}
-    @media (prefers-reduced-motion: reduce){ .hero-text h1,.hero-text p,.cta,.hero-portrait .portrait{animation:none} }
 
-    /* Scroll-reveal */
+    /* Reveal */
     .reveal{opacity:0; transform:translateY(16px); filter:saturate(.98); transition:opacity .6s cubic-bezier(.2,.6,.2,1), transform .6s cubic-bezier(.2,.6,.2,1)}
     .reveal.is-visible{opacity:1; transform:none; filter:none}
-    @media (prefers-reduced-motion: reduce){ .reveal{opacity:1 !important; transform:none !important; transition:none !important} }
+    @media (prefers-reduced-motion: reduce){
+      .hero-text h1,.hero-text p,.cta,.hero-portrait .portrait{animation:none}
+      .reveal{opacity:1 !important; transform:none !important; transition:none !important}
+    }
+  </style>
 
-    /* Publications formatting */
-    .work-grid .card a{display:block;font-weight:700;line-height:1.35;margin-bottom:.35rem}
-    .work-grid .card span{opacity:.85}
-    .work-grid .card p{margin:.2rem 0 0}
-    .work-grid .pub-meta{font-size:.9rem;opacity:.8;margin:.15rem 0 0}
+  <!-- ---------- Mobile overrides (keep this LAST so it wins) ---------- -->
+  <style media="(max-width:740px)">
+    /* Force single-column hero on phones */
+    .hero-inner{ grid-template-columns:1fr !important; gap:1.2rem !important; }
+    .hero-portrait{ order:-1 !important; }
+    .hero-portrait .portrait{ width:min(80vw,320px) !important; height:min(80vw,320px) !important; }
 
-    /* === Hamburger (desktop unchanged) === */
-  .hamburger{ display:none; background:none; border:1px solid var(--border); color:#fff;
-    border-radius:.6rem; padding:.55rem .7rem; line-height:1; cursor:pointer }
-  .mobile-panel{ display:none; }
-  .mobile-panel.open{ display:block; }
+    /* Scale headings/paragraphs */
+    .hero-text h1{ font-size:clamp(1.9rem,7vw,3.2rem) !important; }
+    .hero-text p { font-size:clamp(1rem,3.7vw,1.2rem) !important; }
 
-  @media (max-width:740px){
-    /* Keep sticky look, but space items and show hamburger */
+    /* Mobile nav */
     nav{ justify-content:space-between; gap:.6rem; padding:.6rem .8rem; }
-    nav .links{ display:none; }          /* hide inline links on phones */
-    .hamburger{ display:inline-flex; }   /* show hamburger on phones */
+    nav .links{ display:none !important; }
+    .hamburger{ display:inline-flex !important; }
 
-    /* Slide-down area for mobile links */
-    .mobile-panel{ border-top:1px solid var(--border); background:var(--nav); }
-    .mobile-panel a{ display:block; padding:.85rem 1rem; color:#fff; }
-    .mobile-panel a:active{ background:rgba(255,255,255,.08); }
+    /* Section padding & anchor offset for sticky header */
+    section{ padding:2.2rem 1rem; scroll-margin-top:80px; }
 
-    /* Ensure in-page anchors aren’t hidden beneath sticky nav */
-    section{ scroll-margin-top:80px; }
-  }
+    /* Responsive grids/cards */
+    .work-grid{ grid-template-columns:repeat(auto-fit,minmax(220px,1fr)); gap:1rem; }
+    .talks-grid{ grid-template-columns:repeat(auto-fit,minmax(200px,1fr)); gap:1rem; }
+    .talk-card img{ height:clamp(180px,30vw,300px); }
 
+    /* Touch targets */
+    .btn{ min-height:44px; padding:.85rem 1.1rem; }
+
+    @media (max-width:380px){
+      .btn{ padding:.8rem 1rem }
+    }
   </style>
 </head>
 <body>
-  <nav>
-  <div class="links">
-    <a href="#Home" class="active">Home</a>
-    <a href="#About">About</a>
-    <a href="#Rinterests">Research</a>
-    <a href="#Work">Recent Work</a>
-    <a href="#Talks">Talks</a>
-    <a href="#Teaching">Teaching</a>
-    <a href="#Contact">Contact</a>
-  </div>
-  <button id="themeToggle" class="theme-toggle" aria-label="Toggle theme">🌗</button>
-  <button id="hamburger" class="hamburger" aria-controls="mobilePanel" aria-expanded="false" aria-label="Open menu">☰</button>
-</nav>
-<!-- Mobile panel sits right under the sticky nav -->
-<div id="mobilePanel" class="mobile-panel" hidden></div>
+  <a class="skip-link" href="#main">Skip to content</a>
 
+  <nav>
+    <div class="links">
+      <a href="#Home" class="active">Home</a>
+      <a href="#About">About</a>
+      <a href="#Rinterests">Research</a>
+      <a href="#Work">Recent Work</a>
+      <a href="#Talks">Talks</a>
+      <a href="#Teaching">Teaching</a>
+      <a href="#Contact">Contact</a>
+    </div>
+    <button id="themeToggle" class="theme-toggle" aria-label="Toggle theme" title="Toggle theme">🌗</button>
+    <button id="hamburger" class="hamburger" aria-controls="mobilePanel" aria-expanded="false" aria-label="Open menu" title="Menu">☰</button>
+  </nav>
+  <div id="mobilePanel" class="mobile-panel" hidden></div>
 
   <header id="Home" class="hero">
     <div class="hero-inner">
@@ -281,39 +226,32 @@
         <h1>Hi, I’m Ian Pang</h1>
         <p>Physics PhD student at Rutgers University (NHETC), advised by Prof. David Shih. I build machine-learning methods for collider physics—spanning fast simulation, anomaly detection, foundation models, and open data.</p>
         <div class="cta">
-      <a class="btn primary" href="#Work">View My Work</a>
-      <a class="btn light" href="#Contact">Get in Touch</a>
+          <a class="btn primary" href="#Work">View My Work</a>
+          <a class="btn light" href="#Contact">Get in Touch</a>
 
-      <!-- GitHub badge -->
-      <a class="btn badge" href="https://github.com/Ian-Pang"
-        target="_blank" rel="noopener" aria-label="GitHub profile">
-        <!-- Inline GitHub mark (no external asset) -->
-        <svg viewBox="0 0 16 16" aria-hidden="true" focusable="false" role="img">
-          <path fill="currentColor" d="M8 0C3.58 0 0 3.58 0 8a8 8 0 0 0 5.47 7.59c.4.07.55-.17.55-.38
-          0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52
-          -.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64
-          -.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82A7.53 7.53 0 0 1 8 
-          3.47c.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 
-          0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.19 0 .21.15.46.55.38A8 
-          8 0 0 0 16 8c0-4.42-3.58-8-8-8Z"/>
-        </svg>
-      </a>
+          <!-- GitHub badge -->
+          <a class="btn badge" href="https://github.com/Ian-Pang" target="_blank" rel="noopener" aria-label="GitHub profile">
+            <svg viewBox="0 0 16 16" aria-hidden="true" focusable="false" role="img">
+              <path fill="currentColor" d="M8 0C3.58 0 0 3.58 0 8a8 8 0 0 0 5.47 7.59c.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52 -.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64 -.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82A7.53 7.53 0 0 1 8 3.47c.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.19 0 .21.15.46.55.38A8 8 0 0 0 16 8c0-4.42-3.58-8-8-8Z"/>
+            </svg>
+          </a>
 
-  <!-- Inspire-HEP badge (logo text “iN”) -->
-  <a class="btn badge inspire" href="https://inspirehep.net/authors/2170937"
-     target="_blank" rel="noopener" aria-label="Inspire-HEP profile">
-    <span class="in">iN</span>
-  </a>
-</div>
-
+          <!-- Inspire-HEP badge -->
+          <a class="btn badge inspire" href="https://inspirehep.net/authors/2170937" target="_blank" rel="noopener" aria-label="Inspire-HEP profile">
+            <span class="in">iN</span>
+          </a>
+        </div>
       </div>
+
       <figure class="hero-portrait">
-        <div class="portrait"><img src="images/ian_pang.png" alt="Ian Pang" /></div>
+        <div class="portrait">
+          <img src="images/ian_pang.png" alt="Ian Pang" width="600" height="600" loading="eager" decoding="async" />
+        </div>
       </figure>
     </div>
   </header>
 
-  <main>
+  <main id="main" tabindex="-1">
     <!-- About -->
     <section id="About" class="bg-neural reveal">
       <h2>About Me</h2>
@@ -336,140 +274,103 @@
       </div>
     </section>
 
-<section id="Work" class="bg-neural reveal">
-  <h2>Recent Work</h2>
-  <div class="work-grid">
-    <div class="card" data-date="2025-06-01">
-      <a href="https://journals.aps.org/prd/abstract/10.1103/PhysRevD.111.076004" target="_blank" rel="noopener">
-        Unifying Simulation and Inference with Normalizing Flows, <span>Phys. Rev. D 111, 076004 (2025)</span>
-      </a>
-      <p>Shows how a single NF framework supports simulation, calibration, and likelihood-based inference.</p>
-      <p class="pub-meta"><a href="https://arxiv.org/abs/2404.18992" target="_blank" rel="noopener">arXiv:2404.18992</a></p>
-    </div>
-
-    <div class="card" data-date="2025-03-01">
-      <a href="https://iopscience.iop.org/article/10.1088/2632-2153/ade58f" target="_blank" rel="noopener">
-        Aspen Open Jets: unlocking LHC data for foundation models in particle physics, <span>Mach. Learn. Sci. Tech. 6 (2025) 3, 030601</span>
-      </a>
-      <p>Open, standardized jets dataset enabling pretraining and benchmarking of foundation models for HEP.</p>
-      <p class="pub-meta"><a href="https://arxiv.org/abs/2412.10504" target="_blank" rel="noopener">arXiv:2412.10504</a> • Companion dataset: <a href="https://www.fdr.uni-hamburg.de/record/16505" target="_blank" rel="noopener">Aspen Open Jets (data portal)</a></p>
-    </div>
-
-    <div class="card" data-date="2024-09-01">
-      <a href="https://link.aps.org/doi/10.1103/PhysRevD.110.035036" target="_blank" rel="noopener">
-        Anomaly detection with flow-based fast calorimeter simulators, <span>Phys. Rev. D 110, 035036 (2024)</span>
-      </a>
-      <p>Uses learned likelihoods/latents from fast simulators as powerful unsupervised anomaly scores.</p>
-      <p class="pub-meta"><a href="https://arxiv.org/abs/2312.11618" target="_blank" rel="noopener">arXiv:2312.11618</a></p>
-    </div>
-
-    <div class="card" data-date="2024-03-01">
-      <a href="https://link.aps.org/doi/10.1103/PhysRevD.109.033006" target="_blank" rel="noopener">
-        Inductive Simulation of Calorimeter Showers with Normalizing Flows, <span>Phys. Rev. D 109, 033006 (2024)</span>
-      </a>
-      <p>Inductive NF simulator that scales CaloFlow to higher-dimensional calorimeter data.</p>
-      <p class="pub-meta"><a href="https://arxiv.org/abs/2305.11934" target="_blank" rel="noopener">arXiv:2305.11934</a></p>
-    </div>
-
-    <div class="card" data-date="2024-05-01">
-      <a href="https://journals.aps.org/prd/abstract/10.1103/PhysRevD.109.092009" target="_blank" rel="noopener">
-        Calorimeter shower superresolution (SuperCalo), <span>Phys. Rev. D 109, 092009 (2024)</span>
-      </a>
-      <p>Flow-based super-resolution for fast, high-fidelity calorimeter simulation.</p>
-      <p class="pub-meta"><a href="https://arxiv.org/abs/2308.11700" target="_blank" rel="noopener">arXiv:2308.11700</a></p>
-    </div>
-
-    <div class="card" data-date="2024-05-15">
-      <a href="https://scipost.org/SciPostPhys.16.5.126" target="_blank" rel="noopener">
-        CaloFlow for CaloChallenge Dataset 1, <span>SciPost Phys. 16, 126 (2024)</span>
-      </a>
-      <p>Normalizing-flow simulator validated on CaloChallenge 2022 (Dataset 1).</p>
-      <p class="pub-meta"><a href="https://arxiv.org/abs/2210.14245" target="_blank" rel="noopener">arXiv:2210.14245</a></p>
-    </div>
-  </div>
-</section>
-
-
-  <section id="Talks" class="bg-feynman reveal">
-  <h2>Talks</h2>
-  <div class="talks-grid">
-    <!-- Existing talks with images -->
-    <div class="talk-card">
-      <img src="images/thumbs/serin.png" alt="Rutgers">
-      <div class="pad">
-        <h3>ML4Jets 2022 • Rutgers</h3>
-        <a href="https://indico.cern.ch/event/1159913/contributions/5062744/attachments/2539580/4371555/ML4Jets_talk_ian_pang.pdf" target="_blank" rel="noopener">CaloFlow for CaloChallenge</a>
+    <section id="Work" class="bg-neural reveal">
+      <h2>Recent Work</h2>
+      <div class="work-grid">
+        <div class="card" data-date="2025-06-01">
+          <a href="https://journals.aps.org/prd/abstract/10.1103/PhysRevD.111.076004" target="_blank" rel="noopener">Unifying Simulation and Inference with Normalizing Flows, <span>Phys. Rev. D 111, 076004 (2025)</span></a>
+          <p>Shows how a single NF framework supports simulation, calibration, and likelihood-based inference.</p>
+          <p class="pub-meta"><a href="https://arxiv.org/abs/2404.18992" target="_blank" rel="noopener">arXiv:2404.18992</a></p>
+        </div>
+        <div class="card" data-date="2025-03-01">
+          <a href="https://iopscience.iop.org/article/10.1088/2632-2153/ade58f" target="_blank" rel="noopener">Aspen Open Jets: unlocking LHC data for foundation models in particle physics, <span>Mach. Learn. Sci. Tech. 6 (2025) 3, 030601</span></a>
+          <p>Open, standardized jets dataset enabling pretraining and benchmarking of foundation models for HEP.</p>
+          <p class="pub-meta"><a href="https://arxiv.org/abs/2412.10504" target="_blank" rel="noopener">arXiv:2412.10504</a> • Companion dataset: <a href="https://www.fdr.uni-hamburg.de/record/16505" target="_blank" rel="noopener">Aspen Open Jets (data portal)</a></p>
+        </div>
+        <div class="card" data-date="2024-09-01">
+          <a href="https://link.aps.org/doi/10.1103/PhysRevD.110.035036" target="_blank" rel="noopener">Anomaly detection with flow-based fast calorimeter simulators, <span>Phys. Rev. D 110, 035036 (2024)</span></a>
+          <p>Uses learned likelihoods/latents from fast simulators as powerful unsupervised anomaly scores.</p>
+          <p class="pub-meta"><a href="https://arxiv.org/abs/2312.11618" target="_blank" rel="noopener">arXiv:2312.11618</a></p>
+        </div>
+        <div class="card" data-date="2024-03-01">
+          <a href="https://link.aps.org/doi/10.1103/PhysRevD.109.033006" target="_blank" rel="noopener">Inductive Simulation of Calorimeter Showers with Normalizing Flows, <span>Phys. Rev. D 109, 033006 (2024)</span></a>
+          <p>Inductive NF simulator that scales CaloFlow to higher-dimensional calorimeter data.</p>
+          <p class="pub-meta"><a href="https://arxiv.org/abs/2305.11934" target="_blank" rel="noopener">arXiv:2305.11934</a></p>
+        </div>
+        <div class="card" data-date="2024-05-01">
+          <a href="https://journals.aps.org/prd/abstract/10.1103/PhysRevD.109.092009" target="_blank" rel="noopener">Calorimeter shower superresolution (SuperCalo), <span>Phys. Rev. D 109, 092009 (2024)</span></a>
+          <p>Flow-based super-resolution for fast, high-fidelity calorimeter simulation.</p>
+          <p class="pub-meta"><a href="https://arxiv.org/abs/2308.11700" target="_blank" rel="noopener">arXiv:2308.11700</a></p>
+        </div>
+        <div class="card" data-date="2024-05-15">
+          <a href="https://scipost.org/SciPostPhys.16.5.126" target="_blank" rel="noopener">CaloFlow for CaloChallenge Dataset 1, <span>SciPost Phys. 16, 126 (2024)</span></a>
+          <p>Normalizing-flow simulator validated on CaloChallenge 2022 (Dataset 1).</p>
+          <p class="pub-meta"><a href="https://arxiv.org/abs/2210.14245" target="_blank" rel="noopener">arXiv:2210.14245</a></p>
+        </div>
       </div>
-    </div>
+    </section>
 
-    <div class="talk-card">
-      <img src="images/thumbs/frascati.png" alt="Frascati">
-      <div class="pad">
-        <h3>CaloChallenge 2023 • Frascati</h3>
-        <a href="https://agenda.infn.it/event/34036/contributions/200895/attachments/105940/149041/challenge_workshop.pdf" target="_blank" rel="noopener">Inductive CaloFlow</a>
+    <section id="Talks" class="bg-feynman reveal">
+      <h2>Talks</h2>
+      <div class="talks-grid">
+        <div class="talk-card">
+          <img src="images/thumbs/serin.png" alt="Rutgers" width="800" height="450" loading="lazy" decoding="async">
+          <div class="pad">
+            <h3>ML4Jets 2022 • Rutgers</h3>
+            <a href="https://indico.cern.ch/event/1159913/contributions/5062744/attachments/2539580/4371555/ML4Jets_talk_ian_pang.pdf" target="_blank" rel="noopener">CaloFlow for CaloChallenge</a>
+          </div>
+        </div>
+        <div class="talk-card">
+          <img src="images/thumbs/frascati.png" alt="Frascati" width="800" height="450" loading="lazy" decoding="async">
+          <div class="pad">
+            <h3>CaloChallenge 2023 • Frascati</h3>
+            <a href="https://agenda.infn.it/event/34036/contributions/200895/attachments/105940/149041/challenge_workshop.pdf" target="_blank" rel="noopener">Inductive CaloFlow</a>
+          </div>
+        </div>
+        <div class="talk-card">
+          <img src="images/thumbs/hamburg.png" alt="Hamburg" width="800" height="450" loading="lazy" decoding="async">
+          <div class="pad">
+            <h3>ML4Jets 2023 • Hamburg</h3>
+            <a href="https://indico.cern.ch/event/1253794/contributions/5588620/attachments/2746575/4779254/ML4Jets_2023.pdf" target="_blank" rel="noopener">SuperCalo</a>
+          </div>
+        </div>
+        <div class="talk-card">
+          <img src="images/thumbs/pitts.jpg" alt="Pittsburgh" width="800" height="450" loading="lazy" decoding="async">
+          <div class="pad">
+            <h3>Pheno 2024 • Pittsburgh</h3>
+            <a href="https://indico.global/event/805/contributions/23749/attachments/11207/16579/ianpang_pheno24.pdf" target="_blank" rel="noopener">The versatility of flow-based fast calorimeter surrogate models</a>
+          </div>
+        </div>
+        <div class="talk-card">
+          <img src="images/thumbs/paris.jpg" alt="Paris" width="800" height="450" loading="lazy" decoding="async">
+          <div class="pad">
+            <h3>ML4Jets 2024 • Paris</h3>
+            <a href="https://indico.cern.ch/event/1386125/contributions/6185289/attachments/2959638/5205143/ML4Jets_AOJ.pdf" target="_blank" rel="noopener">Introducing Aspen Open Jets: a real-world ML-ready dataset for jet physics</a>
+            <a href="https://indico.cern.ch/event/1386125/contributions/6084736/attachments/2962487/5212153/ML4Jets_calo.pdf" target="_blank" rel="noopener">The versatility of flow-based fast calorimeter surrogate models</a>
+          </div>
+        </div>
+        <div class="talk-card">
+          <img src="images/thumbs/caltech.jpg" alt="Caltech" width="800" height="450" loading="lazy" decoding="async">
+          <div class="pad">
+            <h3>ML4Jets 2025 • Caltech</h3>
+            <a href="https://indico.cern.ch/event/1526677/contributions/6619374/attachments/3120123/5532723/ML4Jets_conditional.pdf" target="_blank" rel="noopener">Get Your Jets in Shape: Conditioning Heads and Backbones</a>
+            <a href="https://indico.cern.ch/event/1526677/contributions/6619373/attachments/3121384/5535175/ML4Jets_optimal_v2.pdf" target="_blank" rel="noopener">Comparing Continuous and Tokenized Jet Generation Approaches for Precision Modeling</a>
+          </div>
+        </div>
       </div>
-    </div>
-    
-    <div class="talk-card">
-      <img src="images/thumbs/hamburg.png" alt="Hamburg">
-      <div class="pad">
-        <h3>ML4Jets 2023 • Hamburg</h3>
-        <a href="https://indico.cern.ch/event/1253794/contributions/5588620/attachments/2746575/4779254/ML4Jets_2023.pdf" target="_blank" rel="noopener">SuperCalo</a>
+    </section>
+
+    <section id="Teaching" class="reveal">
+      <h2>Teaching</h2>
+      <div class="card">
+        <ul>
+          <li>General Physics I Lab (Fall 2021)</li>
+          <li>Analytical Physics IIb Lab (Spring 2022)</li>
+          <li>General Physics II Recitation (Fall 2022)</li>
+          <li>Extended General Physics I Recitation (Spring 2023)</li>
+        </ul>
       </div>
-    </div>
-
-    <!-- Newer talks -->
-    <div class="talk-card">
-      <img src="images/thumbs/pitts.jpg" alt="Pittsburgh">
-      <div class="pad">
-        <h3>Pheno 2024 • Pittsburgh</h3>
-        <a href="https://indico.global/event/805/contributions/23749/attachments/11207/16579/ianpang_pheno24.pdf" target="_blank" rel="noopener">
-          The versatility of flow-based fast calorimeter surrogate models
-        </a>
-      </div>
-    </div>
-
-    <div class="talk-card">
-      <img src="images/thumbs/paris.jpg" alt="Paris">
-      <div class="pad">
-        <h3>ML4Jets 2024 • Paris</h3>
-        <a href="https://indico.cern.ch/event/1386125/contributions/6185289/attachments/2959638/5205143/ML4Jets_AOJ.pdf" target="_blank" rel="noopener">
-          Introducing Aspen Open Jets: a real-world ML-ready dataset for jet physics
-        </a>
-        <a href="https://indico.cern.ch/event/1386125/contributions/6084736/attachments/2962487/5212153/ML4Jets_calo.pdf" target="_blank" rel="noopener">
-          The versatility of flow-based fast calorimeter surrogate models
-        </a>
-      </div>
-    </div>
-
-    <div class="talk-card">
-      <img src="images/thumbs/caltech.jpg" alt="Caltech">
-      <div class="pad">
-        <h3>ML4Jets 2025 • Caltech</h3>
-        <a href="https://indico.cern.ch/event/1526677/contributions/6619374/attachments/3120123/5532723/ML4Jets_conditional.pdf" target="_blank" rel="noopener">
-          Get Your Jets in Shape: Conditioning Heads and Backbones
-        </a>
-        <a href="https://indico.cern.ch/event/1526677/contributions/6619373/attachments/3121384/5535175/ML4Jets_optimal_v2.pdf" target="_blank" rel="noopener">
-          Comparing Continuous and Tokenized Jet Generation Approaches for Precision Modeling
-        </a>
-      </div>
-    </div>
-  </div> <!-- /.talks-grid -->
-</section> <!-- /#Talks -->
-
-
-<section id="Teaching" class="reveal">
-  <h2>Teaching</h2>
-  <div class="card">
-    <ul>
-      <li>General Physics I Lab (Fall 2021)</li>
-      <li>Analytical Physics IIb Lab (Spring 2022)</li>
-      <li>General Physics II Recitation (Fall 2022)</li>
-      <li>Extended General Physics I Recitation (Spring 2023)</li>
-    </ul>
-  </div>
-</section>
-
+    </section>
 
     <section id="Contact" class="reveal">
       <h2>Contact</h2>
@@ -498,17 +399,12 @@
       sections.forEach(s=>io.observe(s));
     })();
 
-    // --- Mobile hamburger menu (minimal) ---
+    // Mobile nav (hamburger)
     const mobPanel = document.getElementById('mobilePanel');
     const ham = document.getElementById('hamburger');
     const desktopLinks = document.querySelectorAll('nav .links a');
+    mobPanel.innerHTML = [...desktopLinks].map(a => `<a href="${a.getAttribute('href')}">${a.textContent}</a>`).join('');
 
-    // Build mobile link list from your desktop links
-    mobPanel.innerHTML = [...desktopLinks]
-      .map(a => `<a href="${a.getAttribute('href')}">${a.textContent}</a>`)
-      .join('');
-
-    // Toggle open/close
     const toggleMob = () => {
       const open = ham.getAttribute('aria-expanded') === 'true';
       ham.setAttribute('aria-expanded', String(!open));
@@ -527,10 +423,9 @@
     });
 
     // Close on Escape
-    window.addEventListener('keydown', (e) => {
+    window.addEventListener('keydown', (e)=>{
       if(e.key === 'Escape' && mobPanel.classList.contains('open')) toggleMob();
     });
-
   </script>
 </body>
 </html>
