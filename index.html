@@ -60,6 +60,7 @@
     /* Hamburger (hidden on desktop) */
     .hamburger{display:none;background:none;border:1px solid var(--border);color:#fff;border-radius:.6rem;padding:.55rem .7rem;line-height:1;cursor:pointer}
     .mobile-panel{display:none}
+    .mobile-panel.open{display:block} /* <— needed for dropdown to show */
 
     /* Hero */
     header.hero{
@@ -98,15 +99,14 @@
 
     /* Buttons */
     .cta{display:flex;gap:.8rem;flex-wrap:wrap;margin-top:1.2rem;animation:fade-up 1s ease .25s both}
-    .btn{display:inline-flex;align-items:center;gap:.5rem;padding:.9rem 1.2rem;border-radius:var(--radius);font-weight:700;letter-spacing:.3px;cursor:pointer;transition:transform .2s ease,box-shadow .2s ease,filter .2s ease;text-decoration:none;min-height:44px}
+    .btn{display:inline-flex;align-items:center;gap:.5rem;padding:.85rem 1.15rem;border-radius:var(--radius);font-weight:700;letter-spacing:.3px;cursor:pointer;transition:transform .2s ease,box-shadow .2s ease,filter .2s ease;text-decoration:none;min-height:44px}
     .btn.primary{background:linear-gradient(90deg,var(--accent),var(--accent2));color:#fff;border:none;box-shadow:0 6px 18px rgba(0,0,0,.3)}
     .btn.primary:hover{transform:translateY(-2px) scale(1.03);filter:brightness(1.1)}
     .btn.light{background:#fff;color:#111827;border:none;box-shadow:0 4px 12px rgba(0,0,0,.18)}
     .btn.light:hover{transform:translateY(-2px) scale(1.03)}
 
     /* Badges */
-    .btn.badge{padding:.55rem .7rem;border-radius:9999px;font-weight:800;line-height:1;display:inline-flex;align-items:center;justify-content:center;gap:.4rem;background:rgba(255,255,255,.12);color:#fff;border:1px solid var(--border);box-shadow:0 3px 10px rgba(0,0,0,.12);min-width:42px;min-height:42px}
-    .btn.badge:hover{ transform:translateY(-2px) scale(1.03); filter:brightness(1.08) }
+    .btn.badge{padding:.5rem .65rem;border-radius:9999px;font-weight:800;line-height:1;display:inline-flex;align-items:center;justify-content:center;gap:.4rem;background:rgba(255,255,255,.12);color:#fff;border:1px solid var(--border);box-shadow:0 3px 10px rgba(0,0,0,.12);min-width:40px;min-height:40px}
     .btn.badge svg{ width:18px; height:18px; display:block }
     [data-theme="light"] .btn.badge{background:#fff;color:#111827;border:1px solid var(--border)}
     .btn.badge.inspire{font-family:ui-sans-serif,system-ui,-apple-system,Segoe UI,Roboto,sans-serif;font-weight:900;letter-spacing:.2px}
@@ -173,32 +173,46 @@
   <!-- ---------- Mobile overrides (keep this LAST so it wins) ---------- -->
   <style media="(max-width:740px)">
     /* Force single-column hero on phones */
-    .hero-inner{ grid-template-columns:1fr !important; gap:1.2rem !important; }
+    .hero-inner{ grid-template-columns:1fr !important; gap:1.05rem !important; }
     .hero-portrait{ order:-1 !important; }
-    .hero-portrait .portrait{ width:min(80vw,320px) !important; height:min(80vw,320px) !important; }
+    .hero-portrait .portrait{ width:min(74vw,300px) !important; height:min(74vw,300px) !important; }
 
-    /* Scale headings/paragraphs */
-    .hero-text h1{ font-size:clamp(1.9rem,7vw,3.2rem) !important; }
-    .hero-text p { font-size:clamp(1rem,3.7vw,1.2rem) !important; }
+    /* Slightly smaller type on mobile */
+    .hero-text h1{ font-size:clamp(1.7rem,6.2vw,3rem) !important; }
+    .hero-text p { font-size:clamp(.95rem,3.4vw,1.1rem) !important; }
+
+    /* Smaller buttons on mobile */
+    .btn{ padding:.7rem 1rem !important; min-height:40px !important; font-size:.95rem !important; }
+    .btn.badge{ min-width:36px !important; min-height:36px !important; padding:.45rem .6rem !important; }
 
     /* Mobile nav */
     nav{ justify-content:space-between; gap:.6rem; padding:.6rem .8rem; }
     nav .links{ display:none !important; }
     .hamburger{ display:inline-flex !important; }
 
+    /* Dropdown panel styling */
+    .mobile-panel{
+      position:relative;
+      z-index:999; /* just under nav's 1000 is fine since it's after nav in DOM */
+      border-top:1px solid var(--border);
+      background:var(--nav);
+      padding:.35rem 0;
+    }
+    .mobile-panel a{
+      display:block; padding:.8rem 1rem; color:#fff;
+    }
+    .mobile-panel a:active{ background:rgba(255,255,255,.08); }
+
     /* Section padding & anchor offset for sticky header */
-    section{ padding:2.2rem 1rem; scroll-margin-top:80px; }
+    section{ padding:2.1rem 1rem; scroll-margin-top:80px; }
 
     /* Responsive grids/cards */
     .work-grid{ grid-template-columns:repeat(auto-fit,minmax(220px,1fr)); gap:1rem; }
     .talks-grid{ grid-template-columns:repeat(auto-fit,minmax(200px,1fr)); gap:1rem; }
     .talk-card img{ height:clamp(180px,30vw,300px); }
 
-    /* Touch targets */
-    .btn{ min-height:44px; padding:.85rem 1.1rem; }
-
     @media (max-width:380px){
-      .btn{ padding:.8rem 1rem }
+      .btn{ padding:.65rem .9rem !important; font-size:.92rem !important; }
     }
   </style>
 </head>
@@ -285,7 +299,7 @@
         <div class="card" data-date="2025-03-01">
           <a href="https://iopscience.iop.org/article/10.1088/2632-2153/ade58f" target="_blank" rel="noopener">Aspen Open Jets: unlocking LHC data for foundation models in particle physics, <span>Mach. Learn. Sci. Tech. 6 (2025) 3, 030601</span></a>
           <p>Open, standardized jets dataset enabling pretraining and benchmarking of foundation models for HEP.</p>
-          <p class="pub-meta"><a href="https://arxiv.org/abs/2412.10504" target="_blank" rel="noopener">arXiv:2412.10504</a> • Companion dataset: <a href="https://www.fdr.uni-hamburg.de/record/16505" target="_blank" rel="noopener">Aspen Open Jets (data portal)</a></p>
+          <p class="pub-meta"><a href="https://arxiv.org/abs/2412.10504" target="_blank" rel="noopener">arXen Open Jets (data portal)</a></p>
         </div>
         <div class="card" data-date="2024-09-01">
           <a href="https://link.aps.org/doi/10.1103/PhysRevD.110.035036" target="_blank" rel="noopener">Anomaly detection with flow-based fast calorimeter simulators, <span>Phys. Rev. D 110, 035036 (2024)</span></a>
